@@ -87,6 +87,10 @@
   background-color: rgba(37, 99, 235, 0.1);
 }
 
+.file-upload-area:active {
+  transform: scale(0.98);
+}
+
 .upload-icon {
   font-size: 3rem;
   color: var(--text-secondary);
@@ -119,10 +123,40 @@
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.refresh-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.refresh-button:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.refresh-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .history-list {
@@ -176,6 +210,18 @@
 .history-item-date {
   font-size: 0.875rem;
   color: var(--text-secondary);
+}
+
+.history-item-action {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.history-item:hover .history-item-action {
+  opacity: 1;
 }
 
 .empty-state {

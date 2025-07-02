@@ -34,7 +34,30 @@ export const getHistory = async (username: string) => {
   const response = await axios.post(`${N8N_WEBHOOK_URL}/c9eaf6ab-21bd-4817-8c7c-16b36019a113`, {
     username: encryptedUsername,
   });
-  return response.data;
+  
+  // Process the response to return a consistent format
+  if (typeof response.data === 'string') {
+    // If it's a string with document names separated by newlines
+    const documentNames = response.data
+      .split('\n')
+      .filter(name => name.trim() !== '')
+      .map((name, index) => ({
+        id: (index + 1).toString(),
+        name: name.trim(),
+        uploadDate: new Date().toLocaleDateString('pt-BR') // Placeholder date
+      }));
+    return documentNames;
+  } else if (Array.isArray(response.data)) {
+    // If it's already an array
+    return response.data.map((item, index) => ({
+      id: item.id || (index + 1).toString(),
+      name: item.name || item.nome_documento || `Documento ${index + 1}`,
+      uploadDate: item.uploadDate || new Date().toLocaleDateString('pt-BR')
+    }));
+  } else {
+    // If it's an empty response or error
+    return [];
+  }
 };
 
 export const getDocument = async (nome_documento: string) => {

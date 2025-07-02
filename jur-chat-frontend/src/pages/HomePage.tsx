@@ -6,43 +6,96 @@ import '../styles/HomePage.css';
 interface Document {
   id: string;
   name: string;
+  uploadDate: string;
 }
 
 const HomePage: React.FC = () => {
   const [history, setHistory] = useState<Document[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+  const [isDragOver, setIsDragOver] = useState(false);
   const username = sessionStorage.getItem('username');
 
-  useEffect(() => {
+  const fetchHistory = async () => {
     if (username) {
-      const fetchHistory = async () => {
-        try {
-          const data = await getHistory(username);
-          // Handle the response format from the API
-          if (Array.isArray(data)) {
-            setHistory(data);
-          } else if (typeof data === 'string') {
-            // Parse the response if it's a string with document names
-            const documents = data.split('\n').filter(name => name.trim()).map((name, index) => ({
-              id: `${index + 1}`,
-              name: name.trim()
-            }));
-            setHistory(documents);
-          }
-        } catch (error) {
-          console.error('Failed to fetch history', error);
-        }
-      };
-      fetchHistory();
+      setIsLoadingHistory(true);
+      try {
+        const data = await getHistory(username);
+        setHistory(data);
+      } catch (error) {
+        console.error('Failed to fetch history', error);
+        setHistory([]);
+      } finally {
+        setIsLoadingHistory(false);
+      }
     }
+  };
+
+  useEffect(() => {
+    fetchHistory();
   }, [username]);
+
+  const handleRefresh = () => {
+    fetchHistory();
+  };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    if (file) {
+      await handleFileUploadDirect(file);
+      // Reset the file input
+      e.target.value = '';
+    }
+  };
+
+  const handleFileAreaClick = () => {
+    const fileInput = document.getElementById('file-input') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+      if (file.type === 'application/pdf' || 
+          file.type === 'application/msword' || 
+          file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        handleFileUploadDirect(file);
+      } else {
+        alert('Por favor, selecione apenas arquivos PDF, DOC ou DOCX.');
+      }
+    }
+  };
+
+  const handleFileUploadDirect = async (file: File) => {
     if (file && username) {
       setIsUploading(true);
       try {
         await uploadFile(file, username);
+        
+        // Add the new document to the history list immediately
+        const newDocument: Document = {
+          id: Date.now().toString(),
+          name: file.name,
+          uploadDate: new Date().toLocaleDateString('pt-BR')
+        };
+        setHistory(prev => [newDocument, ...prev]);
+        
         // Redirect to app page with the file name
         window.location.href = `/app/${encodeURIComponent(file.name)}`;
       } catch (error) {
@@ -74,28 +127,53 @@ const HomePage: React.FC = () => {
       <div className="home-content">
         <div className="upload-section">
           <h2 className="upload-title">Novo Documento</h2>
-          <div className="file-upload-area">
+          <div 
+            className={`file-upload-area ${isDragOver ? 'dragover' : ''}`}
+            onClick={handleFileAreaClick}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            style={{ cursor: isUploading ? 'not-allowed' : 'pointer' }}
+          >
             <div className="upload-icon">📄</div>
             <p className="upload-text">
-              {isUploading ? 'Enviando arquivo...' : 'Clique para selecionar um arquivo'}
+              {isUploading ? 'Enviando arquivo...' : 
+               isDragOver ? 'Solte o arquivo aqui' : 
+               'Clique ou arraste um arquivo aqui'}
             </p>
             <p className="upload-subtext">PDF, DOC, DOCX até 10MB</p>
-            <input
-              type="file"
-              className="file-input"
-              onChange={handleFileUpload}
-              accept=".pdf,.doc,.docx"
-              disabled={isUploading}
-            />
           </div>
+          <input
+            id="file-input"
+            type="file"
+            className="file-input"
+            onChange={handleFileUpload}
+            accept=".pdf,.doc,.docx"
+            disabled={isUploading}
+            style={{ display: 'none' }}
+          />
         </div>
         
         <div className="history-section">
-          <h2 className="history-title">
-            📚 Histórico de Documentos
-          </h2>
+          <div className="history-header">
+            <h2 className="history-title">
+              📚 Histórico de Documentos
+            </h2>
+            <button 
+              onClick={handleRefresh} 
+              className="refresh-button"
+              disabled={isLoadingHistory}
+            >
+              {isLoadingHistory ? '⟳' : '↻'} Atualizar
+            </button>
+          </div>
           
-          {history.length > 0 ? (
+          {isLoadingHistory ? (
+            <div className="loading-state">
+              <div className="loading-spinner"></div>
+              Carregando documentos...
+            </div>
+          ) : history.length > 0 ? (
             <div className="history-list">
               {history.map((doc) => (
                 <Link 
@@ -108,7 +186,10 @@ const HomePage: React.FC = () => {
                   </div>
                   <div className="history-item-content">
                     <div className="history-item-name">{doc.name}</div>
-                    <div className="history-item-date">Clique para abrir</div>
+                    <div className="history-item-date">Enviado em: {doc.uploadDate}</div>
+                  </div>
+                  <div className="history-item-action">
+                    →
                   </div>
                 </Link>
               ))}
