@@ -1,0 +1,1007 @@
+{
+  "name": "AI juridica",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# Cadastro\n\n",
+        "height": 460,
+        "width": 740
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -940,
+        960
+      ],
+      "id": "38c6d1b6-60d8-4627-86b4-17cfa4c0deef",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "d746f1fe-5fab-49e7-894b-696aecb92a9d",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -920,
+        1160
+      ],
+      "id": "eb32500f-f45d-4f45-85be-e08e03e97009",
+      "name": "Recebe cadastro",
+      "webhookId": "d746f1fe-5fab-49e7-894b-696aecb92a9d"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"confirmation\": \"False\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        1260
+      ],
+      "id": "25a2f440-9f9c-4269-a339-4c614a6202f0",
+      "name": "Informações já existem "
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"confirmation\": \"True\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        1020
+      ],
+      "id": "0569b2b8-e33e-496d-80e9-9e3dbc504e8c",
+      "name": "Adicionou user"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "users",
+          "mode": "list",
+          "cachedResultName": "users"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $json.body.email }}",
+            "username": "={{ $json.body.username }}",
+            "password": "={{ $json.body.password }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "username",
+              "displayName": "username",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "password",
+              "displayName": "password",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -720,
+        1160
+      ],
+      "id": "316b6cec-4e9b-467c-894f-423bdea5b1cd",
+      "name": "Postgres",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT username, password\nFROM users \nWHERE username = '{{ $json.body.username }}';\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        240,
+        1140
+      ],
+      "id": "58c29124-e7b3-4ff3-9215-577347782389",
+      "name": "Consultar Usuário por E-mail",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "b7c0c5d6-9835-4b26-b0ee-ccaf8829ca82",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        20,
+        1140
+      ],
+      "id": "7e8d54a6-74d1-478f-bd55-a2f73df65281",
+      "name": "Login",
+      "webhookId": "b7c0c5d6-9835-4b26-b0ee-ccaf8829ca82",
+      "notes": "{\n  \"email\": \"usuario@example.com\",\n  \"password\": \"minhasenhaforte123\"\n}"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"confirmation\": \"True\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        680,
+        980
+      ],
+      "id": "0ad74c1c-dc95-4eb5-918f-0c1d4cca7b81",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"confirmation\": \"False\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        680,
+        1160
+      ],
+      "id": "7a1789c7-ba7f-48b4-921c-5b4416a93462",
+      "name": "Respond to Webhook2"
+    },
+    {
+      "parameters": {
+        "content": "# Login",
+        "height": 460,
+        "width": 920,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        960
+      ],
+      "id": "425a379a-765a-4844-a9cc-9c3ec1609151",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d50dc684-00ec-4c7d-a41d-5cd4793a982c",
+              "leftValue": "={{ $json.password }}",
+              "rightValue": "={{ $('Login').item.json.body.password }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        460,
+        1040
+      ],
+      "id": "0c145dc1-945a-452e-969a-ecee48f4beb4",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-flash",
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        720
+      ],
+      "id": "d914e8c1-2600-4a45-aafa-ad4c08d55915",
+      "name": "Google Gemini Chat Model1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Webhook3').item.json.body.chat_input }}",
+        "options": {
+          "systemMessage": "=Você é um agente de chat especializado em responder perguntas exclusivamente com base nas informações contidas no documento fornecido. Sua principal diretriz é a precisão e a fidelidade estrita ao conteúdo do documento.\n\nInstruções de Comportamento:\n\nResponda APENAS com informações presentes no documento. Não adicione conhecimento externo, opiniões, suposições ou interpretações que não estejam explicitamente declaradas.\nLinguagem Clara e Objetiva: Mantenha suas respostas diretas e fáceis de entender, usando a linguagem mais simples possível para o usuário.\nLocalização da Informação: Se a pergunta puder ser respondida pelo documento, cite a seção ou cláusula relevante (ex: \"Conforme a Cláusula 9.1...\", \"Na seção V - INSCRIÇÃO...\", \"De acordo com o item 1.1...\").\nInformação Não Encontrada: Se a informação solicitada pelo usuário NÃO estiver no documento, responda de forma educada e clara que a informação não foi encontrada no documento. Exemplos de respostas para informações não encontradas:\n\"Não encontrei essa informação no documento.\"\n\"O documento não especifica sobre isso.\"\n\"Minhas informações são limitadas ao conteúdo deste documento e ele não aborda essa questão.\"\n\"Não há detalhes sobre [tópico da pergunta] no documento fornecido.\"\nEvite Generalizações: Se o documento falar de algo em um contexto específico, não generalize essa informação para outros contextos.\nMantenha a Temperatura Baixa (0.1): Lembre-se que sua temperatura é muito baixa, o que significa que você deve ser muito conservador e restrito nas suas respostas, priorizando a extração direta de fatos do texto.\nExemplo de Interação:\n\nUsuário: \"Quem pode participar do hackathon?\"\n\nSua Resposta Esperada: \"O hackathon é aberto para todas as pessoas estudantes de todas as praças e unidades do Ibmec (Rio de Janeiro, São Paulo, Belo Horizonte e Brasília), devidamente matriculadas e adimplentes em qualquer curso de graduação, em qualquer período.\"\n\nUsuário: \"Qual o prêmio para o vencedor nacional?\"\n\nSua Resposta Esperada: \"Apenas uma equipe dentre as vencedoras regionais será premiada com o título de 'Vencedora Nacional do Hackathon Ibmec 2025'. O documento não especifica o valor ou tipo exato do prêmio, apenas o título.\"\n\nUsuário: \"Posso participar se for aluno de pós-graduação?\"\n\nSua Resposta Esperada: \"Não encontrei essa informação no documento. Ele especifica que o hackathon é aberto a estudantes de 'qualquer curso de graduação', mas não menciona a pós-graduação.\"\n\nComece a responder as perguntas do usuário com base no documento que será fornecido.\n\n------------------------------------------------\nDocumento original:\n\n {{ $json.documento_extraido }}\n\n------------------------------------------------\nDocumento traduzido:\n\n{{ $json.documento_traduzido }}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        1740,
+        560
+      ],
+      "id": "7be4497e-744e-4cc9-ac6e-a3656dafec20",
+      "name": "AI chat"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ad577ad7-3860-48b8-88a3-0e4760aea239",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -840,
+        380
+      ],
+      "id": "86e1c78c-93d0-4892-a982-fdde138cda38",
+      "name": "Webhook1",
+      "webhookId": "ad577ad7-3860-48b8-88a3-0e4760aea239"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8765a5ac-6811-4c9e-bdbf-a614c2a3021b",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -220,
+        240
+      ],
+      "id": "6b4e9631-a74b-49ed-82dc-15dc310a2490",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "=file",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        200
+      ],
+      "id": "eeed6d9d-fd9c-48af-8846-9fd04e53151b",
+      "name": "Extract from File1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "Você é um especialista em direito brasileiro e em comunicação clara. Sua tarefa é analisar o documento jurídico anexado e fornecer as seguintes informações de forma didática e acessível, usando o formato de texto simples especificado abaixo.\n\nFormato da Resposta Esperada (Texto Simples):\n\nA resposta deve ser estruturada da seguinte forma, utilizando delimitadores para facilitar a separação:\n\n<INICIO_TRADUCAO_COLQUIAL>\n[Aqui virá a tradução completa e contínua do documento para uma linguagem simples e coloquial, como se estivesse explicando para alguém sem conhecimento jurídico. Evite jargões ou explique-os de forma clara no corpo do texto. Use parágrafos curtos e linguagem direta. O texto deve fluir naturalmente.]\n<FIM_TRADUCAO_COLQUIAL>\n\n<INICIO_RESUMO_CLAUSULAS>\n[Cada resumo de cláusula/seção será apresentado em uma linha separada, com o título da cláusula seguido por um delimitador '::' e, em seguida, o resumo em linguagem coloquial. Cada item de resumo **será seguido pela string '---CLAU.FIM---' em uma nova linha para indicar sua finalização.**\n\nExemplo:]\n\nCláusula 9.1. - Quem pode participar:: O hackathon está aberto a todos os estudantes do Ibmec, de qualquer campus e curso, desde que estejam matriculados e com pagamentos em dia.\n---CLAU.FIM---\nV - INSCRIÇÃO:: Seção que detalha as regras e o processo para participar do hackathon, incluindo quem pode se inscrever e como formar as equipes.\n---CLAU.FIM---\nArtigo 1º:: Este artigo estabelece as diretrizes iniciais para o contrato de locação do imóvel.\n---CLAU.FIM---\nResumo Geral do Documento:: Este é um resumo do objetivo principal e implicações do documento como um todo.\n---CLAU.FIM---\n<FIM_RESUMO_CLAUSULAS>\nInstruções para o Conteúdo:\n\nTradução Coloquial (<INICIO_TRADUCAO_COLQUIAL> a <FIM_TRADUCAO_COLQUIAL>):\n\nApresente o conteúdo do documento de forma contínua, como um texto corrido, utilizando uma linguagem simples e fácil de entender.\nPriorize a clareza sobre o formalismo jurídico.\nSe algum termo técnico for inevitável, explique-o brevemente logo após seu uso no corpo do texto.\nResumo de Cláusulas (<INICIO_RESUMO_CLAUSULAS> a <FIM_RESUMO_CLAUSULAS>):\n\nPara cada cláusula, artigo ou seção relevante do documento original, crie uma linha no formato: Título da Cláusula:: Resumo da Cláusula.\nApós cada linha de resumo de cláusula, adicione uma nova linha contendo ---CLAU.FIM--- para delimitar o fim daquele resumo.\nAo final desta seção, inclua um \"Resumo Geral do Documento\" seguindo o mesmo padrão de Título:: Resumo, também seguido por ---CLAU.FIM---.\nObjetivo Geral:\n\nO objetivo é que o usuário entenda o documento sem a necessidade de consultar dicionários jurídicos ou pedir explicações adicionais, recebendo a informação de forma clara e estruturada para exibição imediata.\n\nComece a análise agora."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e0bf203f-7604-4b30-87ea-a821bcedb4e4",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-flash",
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        0,
+        180
+      ],
+      "id": "9a7b85b0-b0e4-41f2-bfbb-344424bc92b9",
+      "name": "Google Gemini Chat Model2"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "historico_documentos",
+          "mode": "list",
+          "cachedResultName": "historico_documentos"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "username": "={{ $('Webhook1').item.json.body.username }}",
+            "nome_documento": "={{ $('Webhook1').item.json.body.nome_documento }}",
+            "documento_traduzido": "={{ $json.output }}",
+            "documento_extraido": "={{ $('Extract from File1').item.json.text }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "username",
+              "displayName": "username",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "documento_extraido",
+              "displayName": "documento_extraido",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "documento_traduzido",
+              "displayName": "documento_traduzido",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nome_documento",
+              "displayName": "nome_documento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        340,
+        0
+      ],
+      "id": "302d19b0-7e8f-4342-872b-88890d1687b1",
+      "name": "Postgres2",
+      "credentials": {
+        "postgres": {
+          "id": "0S9b5poQYRxY8Xhh",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1e528e63-993a-4035-9e78-cf3cfad165c4",
+              "leftValue": "={{ $json.body.is_file }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -640,
+        380
+      ],
+      "id": "267535a1-dee7-4905-903d-f27f8d8ee780",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        2100,
+        560
+      ],
+      "id": "34121306-ab4d-49ec-92e8-25a1c628fdfa",
+      "name": "Respond to Webhook4"
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        340
+      ],
+      "id": "d44e12a8-ab77-4298-872f-2c039805c902",
+      "name": "Respond to Webhook5"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        620,
+        500
+      ],
+      "id": "4049c266-d658-4c53-bdde-9c87cbaa6843",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "c9eaf6ab-21bd-4817-8c7c-16b36019a113",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        1120
+      ],
+      "id": "7a4cf7ad-1425-4e07-8665-9d4c3fdd22fa",
+      "name": "Webhook",
+      "webhookId": "c9eaf6ab-21bd-4817-8c7c-16b36019a113"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT nome_documento\nFROM historico_documentos\nWHERE username = '{{ $json.body.username }}'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1340,
+        1120
+      ],
+      "id": "409e7ed3-80fc-4482-b900-dfd2a7d70da5",
+      "name": "Postgres3"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "nome_documento"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        1120
+      ],
+      "id": "e5d845ea-e6ab-48c0-b8fd-c3b017547932",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.nome_documento }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        1780,
+        1120
+      ],
+      "id": "43f953bc-5daa-4585-bcce-30944d0d372b",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "156dfa37-7384-4c2f-bcf2-ade46e6d7f4e",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        920
+      ],
+      "id": "8084ae0e-34ff-4465-8623-d3cab9bbe050",
+      "name": "Webhook2",
+      "webhookId": "156dfa37-7384-4c2f-bcf2-ade46e6d7f4e"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "historico_documentos",
+          "mode": "list",
+          "cachedResultName": "historico_documentos"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "nome_documento",
+              "value": "={{ $json.body.nome_documento }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1340,
+        920
+      ],
+      "id": "a2597e88-7766-43e7-8d62-b4dcd5c53aa3",
+      "name": "Postgres4"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.documento_extraido }}\n\n{{ $json.documento_traduzido }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        1560,
+        920
+      ],
+      "id": "2a86fb12-fa2e-414b-ae3a-c51b689e27d0",
+      "name": "Respond to Webhook3"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "26d37223-c353-40db-9ffe-6d07daffd1b2",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        560
+      ],
+      "id": "4d650682-492d-4080-ac31-d579c00b65b8",
+      "name": "Webhook3",
+      "webhookId": "26d37223-c353-40db-9ffe-6d07daffd1b2"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "historico_documentos",
+          "mode": "list",
+          "cachedResultName": "historico_documentos"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "nome_documento",
+              "value": "={{ $json.body.nome_documento }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1380,
+        560
+      ],
+      "id": "ea681f9a-371f-4eb8-a9d8-12e8fa6c3c64",
+      "name": "Postgres5"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Recebe cadastro": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "Adicionou user",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Informações já existem ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar Usuário por E-mail": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Login": {
+      "main": [
+        [
+          {
+            "node": "Consultar Usuário por E-mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI chat",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI chat": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Postgres2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres2": {
+      "main": [
+        []
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Postgres3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres3": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook2": {
+      "main": [
+        [
+          {
+            "node": "Postgres4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres4": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook3": {
+      "main": [
+        [
+          {
+            "node": "Postgres5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres5": {
+      "main": [
+        [
+          {
+            "node": "AI chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "85fbb7bd-d764-43a8-be3a-7ced2b8d3303",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8221769a65a1982a5301637e4c16c1bf4b2a100c7e81256ea363e39a742a4d15"
+  },
+  "id": "qbRYh38AO7fux9aA",
+  "tags": []
+}

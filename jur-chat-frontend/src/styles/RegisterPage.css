@@ -1,0 +1,92 @@
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.register-card {
+  width: 100%;
+  max-width: 450px;
+  background-color: var(--card-background);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-lg);
+  padding: 2.5rem;
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.register-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.register-subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.register-button {
+  margin-top: 1rem;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.register-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+.register-footer {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.register-footer-text {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.register-footer-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 0.25rem;
+}
+
+.register-footer-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .register-card {
+    padding: 2rem;
+    margin: 1rem;
+  }
+  
+  .register-title {
+    font-size: 1.75rem;
+  }
+}
