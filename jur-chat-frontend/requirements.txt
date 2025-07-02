@@ -1,0 +1,305 @@
+# JurChat Frontend - Requirements
+# React + TypeScript Legal AI Application
+# Created: July 2, 2025
+
+# ============================================================================
+# SYSTEM REQUIREMENTS
+# ============================================================================
+
+# Node.js: >= 16.18.0 (Recommended: 18.x or 20.x LTS)
+# npm: >= 8.0.0 (comes with Node.js)
+# Operating System: Windows 10/11, macOS, Linux
+# Browser Support: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+
+# ============================================================================
+# MAIN DEPENDENCIES (Production)
+# ============================================================================
+
+# React Framework
+react@^19.1.0                          # Core React library
+react-dom@^19.1.0                      # React DOM rendering
+react-router-dom@^7.6.3                # Client-side routing
+react-scripts@5.0.1                    # Create React App build tools
+
+# TypeScript
+typescript@^4.9.5                      # TypeScript language support
+@types/react@^19.1.8                   # React TypeScript definitions
+@types/react-dom@^19.1.6               # React DOM TypeScript definitions
+@types/node@^16.18.126                 # Node.js TypeScript definitions
+
+# HTTP Client
+axios@^1.10.0                          # HTTP client for API requests
+
+# Performance Monitoring
+web-vitals@^2.1.4                     # Web performance metrics
+
+# ============================================================================
+# DEVELOPMENT DEPENDENCIES
+# ============================================================================
+
+# Testing Framework
+@testing-library/react@^16.3.0         # React component testing utilities
+@testing-library/jest-dom@^6.6.3       # Custom Jest matchers for DOM
+@testing-library/user-event@^13.5.0    # User interaction simulation
+@testing-library/dom@^10.4.0           # DOM testing utilities
+@types/jest@^27.5.2                    # Jest TypeScript definitions
+
+# ============================================================================
+# PROJECT STRUCTURE
+# ============================================================================
+
+# src/
+# ├── components/
+# │   └── ProtectedRoute.tsx          # Authentication route guard
+# ├── pages/
+# │   ├── LoginPage.tsx               # User authentication page
+# │   ├── RegisterPage.tsx            # User registration page
+# │   ├── HomePage.tsx                # Main dashboard with file upload
+# │   └── AppPage.tsx                 # Document analysis and chat interface
+# ├── services/
+# │   └── api.ts                      # API service layer with n8n integration
+# ├── styles/
+# │   ├── globals.css                 # Global styles and CSS variables
+# │   ├── LoginPage.css               # Login page specific styles
+# │   ├── RegisterPage.css            # Registration page specific styles
+# │   ├── HomePage.css                # Home page specific styles
+# │   └── AppPage.css                 # App page specific styles
+# ├── router.tsx                      # Application routing configuration
+# └── App.tsx                         # Main application component
+
+# public/
+# ├── index.html                      # HTML template
+# └── sha256.js                       # SHA-256 hashing utility
+
+# ============================================================================
+# BACKEND INTEGRATION
+# ============================================================================
+
+# n8n Webhook Endpoints:
+# - Login: /webhook/b7c0c5d6-9835-4b26-b0ee-ccaf8829ca82
+# - Register: /webhook/d746f1fe-5fab-49e7-894b-696aecb92a9d
+# - Document History: /webhook/c9eaf6ab-21bd-4817-8c7c-16b36019a113
+# - Get Document: /webhook/156dfa37-7384-4c2f-bcf2-ade46e6d7f4e
+# - File Upload: /webhook/ad577ad7-3860-48b8-88a3-0e4760aea239
+# - Chat with Document: /webhook/26d37223-c353-40db-9ffe-6d07daffd1b2
+
+# Base URL: https://n8n.bernardolobo.com.br
+
+# ============================================================================
+# SECURITY FEATURES
+# ============================================================================
+
+# - SHA-256 hashing for all sensitive data (username, email, password)
+# - Session-based authentication with sessionStorage
+# - Protected routes with authentication guards
+# - Secure file upload with type and size validation
+# - XSS protection through React's built-in sanitization
+
+# ============================================================================
+# KEY FEATURES
+# ============================================================================
+
+# Authentication System:
+# - User login and registration
+# - Session management
+# - Protected routes
+
+# File Upload System:
+# - Drag & drop interface
+# - Multiple upload methods (XMLHttpRequest, Fetch)
+# - File type validation (PDF, DOC, DOCX)
+# - File size validation (10MB limit)
+# - Progress tracking
+
+# Document Analysis:
+# - AI-powered document processing
+# - Original document display
+# - Simple language translation
+# - Clause summarization
+# - Search and highlight functionality
+
+# Chat Interface:
+# - Real-time chat with AI about documents
+# - Message history
+# - Loading states and error handling
+
+# User Experience:
+# - Responsive design (mobile, tablet, desktop)
+# - Modern UI with CSS Grid and Flexbox
+# - Loading states and error feedback
+# - Document history management
+# - Download original documents
+
+# ============================================================================
+# INSTALLATION INSTRUCTIONS
+# ============================================================================
+
+# 1. Prerequisites:
+#    - Install Node.js (16.18.0 or higher)
+#    - Ensure npm is available
+
+# 2. Clone/Download the project to desired directory
+
+# 3. Install dependencies:
+#    npm install
+
+# 4. Configure backend URL:
+#    - Update N8N_WEBHOOK_URL in src/services/api.ts
+#    - Ensure n8n backend is running and accessible
+
+# 5. Start development server:
+#    npm start
+#    - Opens browser at http://localhost:3000
+#    - Hot reload enabled for development
+
+# 6. Build for production:
+#    npm run build
+#    - Creates optimized build in /build directory
+#    - Ready for deployment to static hosting
+
+# 7. Run tests:
+#    npm test
+#    - Runs Jest test suite
+#    - Interactive watch mode
+
+# ============================================================================
+# DEPLOYMENT REQUIREMENTS
+# ============================================================================
+
+# Static Hosting:
+# - Any static file hosting service (Netlify, Vercel, GitHub Pages)
+# - CDN recommended for global performance
+# - HTTPS required for secure operation
+
+# Environment Variables (if needed):
+# - REACT_APP_API_URL: Backend API base URL
+# - REACT_APP_ENV: Environment (development, production)
+
+# Build Output:
+# - Static files in /build directory
+# - Gzipped size: ~93KB (main.js) + ~3.4KB (main.css)
+# - Browser caching recommended for static assets
+
+# ============================================================================
+# BROWSER COMPATIBILITY
+# ============================================================================
+
+# Production Support:
+# - Chrome 90+ (>0.2% usage)
+# - Firefox 88+ (>0.2% usage)
+# - Safari 14+ (>0.2% usage)
+# - Edge 90+ (>0.2% usage)
+
+# Development Support:
+# - Latest Chrome version
+# - Latest Firefox version
+# - Latest Safari version
+
+# Required Browser Features:
+# - ES6+ JavaScript support
+# - CSS Grid and Flexbox
+# - File API for uploads
+# - SessionStorage
+# - XMLHttpRequest/Fetch API
+
+# ============================================================================
+# TROUBLESHOOTING
+# ============================================================================
+
+# Common Issues:
+
+# 1. "Module not found" errors:
+#    - Run: npm install
+#    - Clear node_modules: rm -rf node_modules && npm install
+
+# 2. Port 3000 already in use:
+#    - Choose different port when prompted
+#    - Or kill process using port 3000
+
+# 3. Build errors:
+#    - Check TypeScript errors: npm run build
+#    - Fix any linting issues shown
+
+# 4. API connection issues:
+#    - Verify n8n backend is running
+#    - Check CORS settings on backend
+#    - Verify webhook URLs in api.ts
+
+# 5. Upload failures:
+#    - Check file size (<10MB)
+#    - Verify file type (PDF, DOC, DOCX)
+#    - Check network connectivity
+
+# ============================================================================
+# DEVELOPMENT NOTES
+# ============================================================================
+
+# Code Style:
+# - TypeScript strict mode enabled
+# - ESLint configuration from Create React App
+# - Functional components with React Hooks
+# - CSS modules not used (global CSS approach)
+
+# State Management:
+# - React useState and useEffect hooks
+# - Session storage for authentication
+# - No external state management library
+
+# Styling Approach:
+# - CSS files for each page/component
+# - CSS variables for consistent theming
+# - Responsive design with media queries
+# - Modern CSS features (Grid, Flexbox, calc())
+
+# Testing Strategy:
+# - React Testing Library for component tests
+# - Jest for test runner
+# - User-centric testing approach
+# - DOM testing utilities included
+
+# Performance Considerations:
+# - Code splitting at route level
+# - Image optimization recommended
+# - Bundle size monitoring
+# - Lazy loading for large components (future enhancement)
+
+# ============================================================================
+# VERSION HISTORY
+# ============================================================================
+
+# v0.1.0 - Initial Release (July 2, 2025)
+# - Complete authentication system
+# - File upload with multiple fallback methods
+# - Document analysis with AI parsing
+# - Chat interface with document context
+# - Responsive UI design
+# - SHA-256 security implementation
+# - n8n backend integration
+# - Error handling and loading states
+
+# ============================================================================
+# FUTURE ENHANCEMENTS
+# ============================================================================
+
+# Planned Features:
+# - Internationalization (i18n) support
+# - Dark mode theme
+# - Progressive Web App (PWA) capabilities
+# - Offline document caching
+# - Advanced search filters
+# - Document tagging system
+# - User preferences storage
+# - Real-time collaboration features
+# - Advanced analytics integration
+
+# Technical Improvements:
+# - Service Worker implementation
+# - Bundle splitting optimization
+# - Image lazy loading
+# - Virtual scrolling for large lists
+# - Advanced error boundary implementation
+# - Performance monitoring integration
+# - Automated testing pipeline
+# - Docker containerization
+
+# ============================================================================
