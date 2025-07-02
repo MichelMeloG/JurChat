@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { uploadFile, getHistory } from '../services/api';
+import { uploadFile, getHistory, testUploadEndpoint, uploadFileWithFetch, uploadFileDebug } from '../services/api';
 import '../styles/HomePage.css';
 
 interface Document {
@@ -42,6 +42,27 @@ const HomePage: React.FC = () => {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file type
+      const allowedTypes = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ];
+      
+      if (!allowedTypes.includes(file.type)) {
+        alert('Por favor, selecione apenas arquivos PDF, DOC ou DOCX.');
+        e.target.value = '';
+        return;
+      }
+      
+      // Validate file size (10MB limit)
+      const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+      if (file.size > maxSize) {
+        alert('O arquivo é muito grande. O limite é de 10MB.');
+        e.target.value = '';
+        return;
+      }
+      
       await handleFileUploadDirect(file);
       // Reset the file input
       e.target.value = '';
@@ -72,13 +93,27 @@ const HomePage: React.FC = () => {
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       const file = files[0];
-      if (file.type === 'application/pdf' || 
-          file.type === 'application/msword' || 
-          file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-        handleFileUploadDirect(file);
-      } else {
+      
+      // Validate file type
+      const allowedTypes = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ];
+      
+      if (!allowedTypes.includes(file.type)) {
         alert('Por favor, selecione apenas arquivos PDF, DOC ou DOCX.');
+        return;
       }
+      
+      // Validate file size (10MB limit)
+      const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+      if (file.size > maxSize) {
+        alert('O arquivo é muito grande. O limite é de 10MB.');
+        return;
+      }
+      
+      handleFileUploadDirect(file);
     }
   };
 
@@ -86,7 +121,24 @@ const HomePage: React.FC = () => {
     if (file && username) {
       setIsUploading(true);
       try {
-        await uploadFile(file, username);
+        console.log('Iniciando upload do arquivo:', file.name, 'Size:', file.size, 'Type:', file.type);
+        
+        let result;
+        try {
+          // Try debug version first for better logging
+          console.log('Tentando upload com versão debug...');
+          result = await uploadFileDebug(file, username);
+        } catch (debugError) {
+          console.log('Debug upload falhou, tentando XMLHttpRequest normal...', debugError);
+          try {
+            result = await uploadFile(file, username);
+          } catch (xhrError) {
+            console.log('XMLHttpRequest falhou, tentando com fetch...', xhrError);
+            result = await uploadFileWithFetch(file, username);
+          }
+        }
+        
+        console.log('Upload result:', result);
         
         // Add the new document to the history list immediately
         const newDocument: Document = {
@@ -96,11 +148,33 @@ const HomePage: React.FC = () => {
         };
         setHistory(prev => [newDocument, ...prev]);
         
-        // Redirect to app page with the file name
-        window.location.href = `/app/${encodeURIComponent(file.name)}`;
-      } catch (error) {
+        // Show success message
+        alert('Arquivo enviado com sucesso!');
+        
+        // Redirect to app page with the file name after a short delay
+        setTimeout(() => {
+          window.location.href = `/app/${encodeURIComponent(file.name)}`;
+        }, 1000);
+        
+      } catch (error: any) {
         console.error('File upload failed', error);
-        alert('Erro no upload do arquivo. Tente novamente.');
+        let errorMessage = 'Erro no upload do arquivo. Tente novamente.';
+        
+        if (error.message) {
+          if (error.message.includes('413') || error.message.includes('too large')) {
+            errorMessage = 'Arquivo muito grande. O limite é de 10MB.';
+          } else if (error.message.includes('415') || error.message.includes('unsupported')) {
+            errorMessage = 'Tipo de arquivo não suportado. Use apenas PDF, DOC ou DOCX.';
+          } else if (error.message.includes('Network Error')) {
+            errorMessage = 'Erro de conexão. Verifique sua internet e tente novamente.';
+          } else if (error.message.includes('timeout')) {
+            errorMessage = 'Timeout: O upload demorou muito. Tente com um arquivo menor.';
+          } else if (error.message.includes('HTTP Error')) {
+            errorMessage = `Erro do servidor: ${error.message}`;
+          }
+        }
+        
+        alert(errorMessage);
       } finally {
         setIsUploading(false);
       }
@@ -110,6 +184,19 @@ const HomePage: React.FC = () => {
   const handleLogout = () => {
     sessionStorage.removeItem('username');
     window.location.href = '/login';
+  };
+
+  const handleTestEndpoint = async () => {
+    try {
+      const result = await testUploadEndpoint();
+      if (result.success) {
+        alert('Endpoint está funcionando: ' + JSON.stringify(result.data));
+      } else {
+        alert('Endpoint com erro: ' + result.error);
+      }
+    } catch (error) {
+      alert('Erro ao testar endpoint: ' + error);
+    }
   };
 
   return (
@@ -124,10 +211,12 @@ const HomePage: React.FC = () => {
         </button>
       </div>
       
-      <div className="home-content">
-        <div className="upload-section">
+      <div className="home-content">          <div className="upload-section">
           <h2 className="upload-title">Novo Documento</h2>
-          <div 
+          <button onClick={handleTestEndpoint} style={{marginBottom: '10px', padding: '5px 10px'}}>
+            Testar Endpoint
+          </button>
+          <div
             className={`file-upload-area ${isDragOver ? 'dragover' : ''}`}
             onClick={handleFileAreaClick}
             onDragOver={handleDragOver}
