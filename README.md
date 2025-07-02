@@ -1,1 +1,1 @@
-# juIA
+# JurChat
