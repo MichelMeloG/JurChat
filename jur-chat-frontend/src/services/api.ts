@@ -67,6 +67,19 @@ export const getDocument = async (nome_documento: string) => {
   return response.data;
 };
 
+export const getOriginalDocument = async (nome_documento: string) => {
+  try {
+    // Try to get the original extracted text from the database
+    const response = await axios.post(`${N8N_WEBHOOK_URL}/get-original-text`, {
+      nome_documento,
+    });
+    return response.data;
+  } catch (error) {
+    console.log('Original document endpoint not available, using processed document');
+    return null;
+  }
+};
+
 interface UploadResponse {
   ok: boolean;
   status: number;
