@@ -1,15 +1,41 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { uploadFile, testUploadEndpoint, uploadFileWithFetch, uploadFileDebug } from '../services/api';
-import { FiArrowUpCircle, FiClock, FiLogOut, FiUpload, FiMenu, FiX } from 'react-icons/fi';
+import { useNavigate, Link } from 'react-router-dom';
+import { uploadFile, testUploadEndpoint, uploadFileWithFetch, uploadFileDebug, getHistory } from '../services/api';
+import { FiArrowUpCircle, FiClock, FiLogOut, FiUpload, FiMenu, FiX, FiFileText, FiArrowRight } from 'react-icons/fi';
 import '../styles/HomePage.css';
+
+interface Document {
+  id: string;
+  name: string;
+  uploadDate: string;
+}
 
 const HomePage: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [history, setHistory] = useState<Document[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const username = sessionStorage.getItem('username');
   const navigate = useNavigate();
+
+  const fetchHistory = useCallback(async () => {
+    if (username) {
+      setIsLoadingHistory(true);
+      try {
+        const data = await getHistory(username);
+        setHistory(data.length ? data : []);
+      } catch (error) {
+        setHistory([]);
+      } finally {
+        setIsLoadingHistory(false);
+      }
+    }
+  }, [username]);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -118,6 +144,8 @@ const HomePage: React.FC = () => {
         // Redirect to app page with the file name after a short delay
         setTimeout(() => {
           navigate(`/app/${encodeURIComponent(file.name)}`);
+          // Refresh history after successful upload
+          fetchHistory();
         }, 1000);
         
       } catch (error: any) {
@@ -170,27 +198,14 @@ const HomePage: React.FC = () => {
         <div className="navbar-logo">Jurchat</div>
         
         {/* Desktop Navigation */}
-        <nav className="navbar-menu desktop-menu">
-          <button className="navbar-btn navbar-btn-active" style={{background: '#e0edff', color: '#2563eb', fontWeight: 600}}>
-            <span className="navbar-btn-icon">
-              <FiArrowUpCircle size={20} color="#2563eb" />
-            </span>
-            Dashboard
-          </button>
-          <button className="navbar-btn" onClick={() => navigate('/historico')} style={{background: 'none', color: '#22223b', fontWeight: 500}}>
-            <span className="navbar-btn-icon">
-              <FiClock size={20} color="#22223b" />
-            </span>
-            Histórico
-          </button>
-        </nav>
+        
 
         {/* Desktop User Section */}
         <div className="navbar-user desktop-user">
           <span>Olá, {username}</span>
           <button className="navbar-logout" onClick={handleLogout}>
             <span className="navbar-logout-icon">
-              <FiLogOut size={20} color="#475569" />
+              <FiLogOut size={20} color="#64748b" />
             </span>
             Sair
           </button>
@@ -211,24 +226,7 @@ const HomePage: React.FC = () => {
             <div className="mobile-menu-overlay" onClick={() => setIsMobileMenuOpen(false)}></div>
             <div className="mobile-menu">
               <nav className="mobile-nav">
-                <button 
-                  className="mobile-nav-btn mobile-nav-btn-active"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <span className="mobile-nav-icon">
-                    <FiArrowUpCircle size={20} />
-                  </span>
-                  Dashboard
-                </button>
-                <button 
-                  className="mobile-nav-btn" 
-                  onClick={() => { navigate('/historico'); setIsMobileMenuOpen(false); }}
-                >
-                  <span className="mobile-nav-icon">
-                    <FiClock size={20} />
-                  </span>
-                  Histórico
-                </button>
+                
               </nav>
               <div className="mobile-user-section">
                 <div className="mobile-user-greeting">
@@ -267,7 +265,7 @@ const HomePage: React.FC = () => {
                 style={{ cursor: isUploading ? 'not-allowed' : 'pointer' }}
               >
                 <div className="upload-card-uploadicon">
-                  <FiUpload size={40} color="#94a3b8" />
+                  <FiUpload size={40} color="#667eea" />
                 </div>
                 <div className="upload-card-text-main">Arraste seu PDF aqui</div>
                 <div className="upload-card-text-sub">ou clique para selecionar um arquivo</div>
@@ -283,6 +281,52 @@ const HomePage: React.FC = () => {
               />
             </>
           )}
+        </div>
+        
+        {/* História Section */}
+        <div className="history-section">
+          <div className="history-card">
+            <div className="history-title">Documentos Analisados ({history.length})</div>
+            {isLoadingHistory ? (
+              <div className="history-loading-state">
+                <div className="history-loading-spinner"></div>
+                Carregando documentos...
+              </div>
+            ) : history.length > 0 ? (
+              <div className="history-list">
+                {history.map((doc) => {
+                  const documentPath = `/app/${encodeURIComponent(doc.name)}`;
+                  return (
+                    <Link
+                      key={doc.id}
+                      to={documentPath}
+                      className="history-list-item"
+                    >
+                      <span className="history-list-icon">
+                        <FiFileText size={24} color="#667eea" />
+                      </span>
+                      <span className="history-list-name">{doc.name}</span>
+                      <div className="history-list-meta">
+                        <span className="history-list-date">
+                          <span>Enviado em</span>
+                          <span>{doc.uploadDate}</span>
+                        </span>
+                        <span className="history-list-arrow">
+                          <FiArrowRight size={20} color="#667eea" />
+                        </span>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="history-empty-state">
+                <div className="history-empty-state-icon">📂</div>
+                <p className="history-empty-state-text">Nenhum documento encontrado</p>
+                <p className="history-empty-state-subtext">Faça upload do seu primeiro documento para começar</p>
+              </div>
+            )}
+          </div>
         </div>
       </main>
     </div>

@@ -246,18 +246,13 @@ const AppPage: React.FC = () => {
         
         {/* Desktop Navigation */}
         <nav className="navbar-menu desktop-menu">
-          <button className="navbar-btn" onClick={() => window.location.href = '/'} style={{background: 'none', color: '#22223b', fontWeight: 500}}>
+          <button className="navbar-btn navbar-btn-active" onClick={() => window.location.href = '/'} style={{background: 'none', color: '#22223b', fontWeight: 500}}>
             <span className="navbar-btn-icon">
               <FiArrowUpCircle size={20} color="#22223b" />
             </span>
-            Dashboard
+            Início
           </button>
-          <button className="navbar-btn navbar-btn-active" style={{background: '#e0edff', color: '#2563eb', fontWeight: 600}}>
-            <span className="navbar-btn-icon">
-              <FiClock size={20} color="#2563eb" />
-            </span>
-            Histórico
-          </button>
+          
         </nav>
 
         {/* Desktop User Section */}
@@ -287,22 +282,13 @@ const AppPage: React.FC = () => {
             <div className="mobile-menu">
               <nav className="mobile-nav">
                 <button 
-                  className="mobile-nav-btn" 
+                  className="mobile-nav-btn mobile-nav-btn-active" 
                   onClick={() => { window.location.href = '/'; setIsMobileMenuOpen(false); }}
                 >
                   <span className="mobile-nav-icon">
                     <FiArrowUpCircle size={20} />
                   </span>
-                  Dashboard
-                </button>
-                <button 
-                  className="mobile-nav-btn mobile-nav-btn-active"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <span className="mobile-nav-icon">
-                    <FiClock size={20} />
-                  </span>
-                  Histórico
+                  Início
                 </button>
               </nav>
               <div className="mobile-user-section">
@@ -326,7 +312,10 @@ const AppPage: React.FC = () => {
       <main className="app-main-centered">
         <div className="app-card app-card-flex">
           <div className="app-col app-col-left">
-            <h2 className="panel-title">📄 Documento Original</h2>
+            <h2 className="panel-title">
+              <span className="title-emoji">📄</span>
+              <span className="title-text">Documento Original</span>
+            </h2>
             {isLoading ? (
               <div className="loading-state">
                 <div className="loading-spinner"></div>
@@ -399,7 +388,10 @@ const AppPage: React.FC = () => {
           </div>
           <div className="app-col app-col-center">
             <div className="analysis-header">
-              <h2 className="panel-title">🤖 Análise Jurídica</h2>
+              <h2 className="panel-title">
+                <span className="title-emoji">🤖</span>
+                <span className="title-text">Análise Jurídica</span>
+              </h2>
               <div className="search-container">
                 <input
                   type="text"
@@ -434,7 +426,10 @@ const AppPage: React.FC = () => {
                 <>
                   {activeTab === 'traducao' && (
                     <div className="traducao-section">
-                      <h3 className="section-title">Tradução em Linguagem Simples</h3>
+                      <h3 className="section-title">
+                        <span className="title-emoji">📝</span>
+                        <span className="title-text">Tradução em Linguagem Simples</span>
+                      </h3>
                       <div 
                         className="traducao-content"
                         dangerouslySetInnerHTML={{
@@ -448,7 +443,10 @@ const AppPage: React.FC = () => {
 
                   {activeTab === 'clausulas' && (
                     <div className="clausulas-section">
-                      <h3 className="section-title">Resumo das Cláusulas</h3>
+                      <h3 className="section-title">
+                        <span className="title-emoji">📋</span>
+                        <span className="title-text">Resumo das Cláusulas</span>
+                      </h3>
                       <div className="clausulas-content">
                         {parsedDocument?.clausulas && parsedDocument.clausulas.length > 0 ? (
                           parsedDocument.clausulas
@@ -487,7 +485,10 @@ const AppPage: React.FC = () => {
           </div>
           <div className="app-col app-col-right">
             <div className="chat-header">
-              <h3 className="panel-title">💬 Chat com IA</h3>
+              <h3 className="panel-title">
+                <span className="title-emoji">💬</span>
+                <span className="title-text">Chat com IA</span>
+              </h3>
               <p className="chat-subtitle">Faça perguntas sobre o documento</p>
             </div>
             <div className="chat-messages">
