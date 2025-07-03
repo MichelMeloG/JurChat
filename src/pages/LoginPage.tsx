@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../services/api';
 import '../styles/LoginPage.css';
 
@@ -7,6 +7,7 @@ const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,7 +16,7 @@ const LoginPage: React.FC = () => {
       const response = await login(username, password);
       if (response.confirmation === 'True') {
         sessionStorage.setItem('username', username);
-        window.location.href = '/';
+        navigate('/');
       } else {
         alert('Credenciais inválidas');
       }

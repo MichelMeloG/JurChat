@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { register } from '../services/api';
 import '../styles/RegisterPage.css';
 
@@ -8,6 +8,7 @@ const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,7 +17,7 @@ const RegisterPage: React.FC = () => {
       const response = await register(name, email, password);
       if (response.confirmation === 'True') {
         sessionStorage.setItem('username', name);
-        window.location.href = '/';
+        navigate('/');
       } else {
         alert('Falha no cadastro');
       }
