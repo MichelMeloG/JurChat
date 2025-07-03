@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { uploadFile, getHistory, testUploadEndpoint, uploadFileWithFetch, uploadFileDebug } from '../services/api';
 import { debugAPIResponse } from '../debug';
 import '../styles/HomePage.css';
@@ -16,6 +16,7 @@ const HomePage: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const [isDragOver, setIsDragOver] = useState(false);
+  const navigate = useNavigate();
   const username = sessionStorage.getItem('username');
 
   const fetchHistory = useCallback(async () => {
@@ -180,7 +181,7 @@ const HomePage: React.FC = () => {
         
         // Redirect to app page with the file name after a short delay
         setTimeout(() => {
-          window.location.href = `/app/${encodeURIComponent(file.name)}`;
+          navigate(`/app/${encodeURIComponent(file.name)}`);
         }, 1000);
         
       } catch (error: any) {
@@ -210,7 +211,7 @@ const HomePage: React.FC = () => {
 
   const handleLogout = () => {
     sessionStorage.removeItem('username');
-    window.location.href = '/login';
+    navigate('/login');
   };
 
   const handleTestEndpoint = async () => {
