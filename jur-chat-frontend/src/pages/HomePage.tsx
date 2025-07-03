@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { uploadFile, getHistory, testUploadEndpoint, uploadFileWithFetch, uploadFileDebug } from '../services/api';
+import { debugAPIResponse } from '../debug';
 import '../styles/HomePage.css';
 
 interface Document {
@@ -24,6 +25,11 @@ const HomePage: React.FC = () => {
         console.log('Fetching document history for username:', username);
         const data = await getHistory(username);
         console.log('History data received:', data);
+        console.log('Number of documents:', data.length);
+        
+        if (data.length > 0) {
+          console.log('Document names:', data.map(doc => doc.name));
+        }
         
         // Add a test document if no documents are returned
         if (data.length === 0) {
@@ -220,6 +226,21 @@ const HomePage: React.FC = () => {
     }
   };
 
+  const handleDebugHistory = async () => {
+    try {
+      console.log('=== DEBUG HISTORY ===');
+      console.log('Username:', username);
+      if (username) {
+        const data = await debugAPIResponse(username);
+        console.log('Debug result:', data);
+        alert('Dados do histórico (veja o console): ' + JSON.stringify(data, null, 2));
+      }
+    } catch (error) {
+      console.error('Erro ao buscar histórico:', error);
+      alert('Erro ao buscar histórico: ' + error);
+    }
+  };
+
   return (
     <div className="home-container">
       <div className="home-header">
@@ -236,6 +257,9 @@ const HomePage: React.FC = () => {
           <h2 className="upload-title">Novo Documento</h2>
           <button onClick={handleTestEndpoint} style={{marginBottom: '10px', padding: '5px 10px'}}>
             Testar Endpoint
+          </button>
+          <button onClick={handleDebugHistory} style={{marginBottom: '10px', marginLeft: '10px', padding: '5px 10px'}}>
+            Debug Histórico
           </button>
           <div
             className={`file-upload-area ${isDragOver ? 'dragover' : ''}`}

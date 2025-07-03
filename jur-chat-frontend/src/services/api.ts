@@ -35,26 +35,144 @@ export const getHistory = async (username: string) => {
     username: encryptedUsername,
   });
   
+  console.log('Raw API response for getHistory:', response.data);
+  console.log('Response type:', typeof response.data);
+  
   // Process the response to return a consistent format
   if (typeof response.data === 'string') {
-    // If it's a string with document names separated by newlines
+    console.log('Processing string response...');
+    // If it's a string with document names separated by newlines or commas
     const documentNames = response.data
-      .split('\n')
+      .split(/[\n,]/)
       .filter(name => name.trim() !== '')
       .map((name, index) => ({
         id: (index + 1).toString(),
         name: name.trim(),
         uploadDate: new Date().toLocaleDateString('pt-BR') // Placeholder date
       }));
+    console.log('Processed document names:', documentNames);
     return documentNames;
   } else if (Array.isArray(response.data)) {
-    // If it's already an array
-    return response.data.map((item, index) => ({
-      id: item.id || (index + 1).toString(),
-      name: item.name || item.nome_documento || `Documento ${index + 1}`,
-      uploadDate: item.uploadDate || new Date().toLocaleDateString('pt-BR')
-    }));
+    console.log('Processing array response...');
+    console.log('Array items:', response.data);
+    
+    // If the array contains strings (just file names)
+    if (response.data.length > 0 && typeof response.data[0] === 'string') {
+      console.log('Array contains strings (file names)');
+      return response.data.map((name, index) => ({
+        id: (index + 1).toString(),
+        name: name.trim(),
+        uploadDate: new Date().toLocaleDateString('pt-BR')
+      }));
+    }
+    
+    // If it's already an array of objects
+    const processedData = response.data.map((item, index) => {
+      console.log(`Processing item ${index}:`, item);
+      
+      // If item is just a string
+      if (typeof item === 'string') {
+        return {
+          id: (index + 1).toString(),
+          name: item.trim(),
+          uploadDate: new Date().toLocaleDateString('pt-BR')
+        };
+      }
+      
+      // Try different possible field names for document name
+      let documentName = item.name || 
+                        item.nome_documento || 
+                        item.filename || 
+                        item.fileName || 
+                        item.file_name ||
+                        item.document_name ||
+                        item.titulo ||
+                        item.title ||
+                        (typeof item === 'string' ? item : `Documento ${index + 1}`);
+      
+      // Try different possible field names for upload date
+      let uploadDate = item.uploadDate || 
+                      item.data_upload || 
+                      item.upload_date ||
+                      item.created_at ||
+                      item.createdAt ||
+                      item.date ||
+                      new Date().toLocaleDateString('pt-BR');
+      
+      // If uploadDate is not in the expected format, try to format it
+      if (uploadDate && typeof uploadDate === 'string' && uploadDate !== new Date().toLocaleDateString('pt-BR')) {
+        try {
+          const date = new Date(uploadDate);
+          uploadDate = date.toLocaleDateString('pt-BR');
+        } catch (e) {
+          console.log('Could not parse date:', uploadDate);
+          uploadDate = new Date().toLocaleDateString('pt-BR');
+        }
+      }
+      
+      return {
+        id: item.id || (index + 1).toString(),
+        name: documentName,
+        uploadDate: uploadDate
+      };
+    });
+    console.log('Processed array data:', processedData);
+    return processedData;
+  } else if (response.data && typeof response.data === 'object') {
+    console.log('Processing object response...');
+    // If it's an object with documents property or similar
+    const documents = response.data.documents || response.data.files || response.data.data || [];
+    if (Array.isArray(documents)) {
+      console.log('Found documents array in object:', documents);
+      return documents.map((item, index) => {
+        let documentName = item.name || 
+                          item.nome_documento || 
+                          item.filename || 
+                          item.fileName || 
+                          item.file_name ||
+                          item.document_name ||
+                          item.titulo ||
+                          item.title ||
+                          (typeof item === 'string' ? item : `Documento ${index + 1}`);
+        
+        let uploadDate = item.uploadDate || 
+                        item.data_upload || 
+                        item.upload_date ||
+                        item.created_at ||
+                        item.createdAt ||
+                        item.date ||
+                        new Date().toLocaleDateString('pt-BR');
+        
+        if (uploadDate && typeof uploadDate === 'string' && uploadDate !== new Date().toLocaleDateString('pt-BR')) {
+          try {
+            const date = new Date(uploadDate);
+            uploadDate = date.toLocaleDateString('pt-BR');
+          } catch (e) {
+            uploadDate = new Date().toLocaleDateString('pt-BR');
+          }
+        }
+        
+        return {
+          id: item.id || (index + 1).toString(),
+          name: documentName,
+          uploadDate: uploadDate
+        };
+      });
+    }
+    
+    // Check if the response itself contains direct fields
+    if (response.data.name || response.data.nome_documento || response.data.filename) {
+      console.log('Object contains direct document fields');
+      return [{
+        id: '1',
+        name: response.data.name || response.data.nome_documento || response.data.filename || 'Documento 1',
+        uploadDate: response.data.uploadDate || response.data.data_upload || new Date().toLocaleDateString('pt-BR')
+      }];
+    }
+    
+    return [];
   } else {
+    console.log('Empty or unknown response format');
     // If it's an empty response or error
     return [];
   }
