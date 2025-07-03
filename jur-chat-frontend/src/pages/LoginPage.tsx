@@ -31,13 +31,12 @@ const LoginPage: React.FC = () => {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <h1 className="login-title">Bem-vindo</h1>
+          <h1 className="login-title">Bem-vindo de volta</h1>
           <p className="login-subtitle">Entre na sua conta para continuar</p>
         </div>
         
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
-            <label className="form-label">Nome de usuário</label>
             <input
               type="text"
               className="input"
@@ -49,7 +48,6 @@ const LoginPage: React.FC = () => {
           </div>
           
           <div className="form-group">
-            <label className="form-label">Senha</label>
             <input
               type="password"
               className="input"
