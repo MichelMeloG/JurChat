@@ -8,7 +8,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 const AppRouter: React.FC = () => {
   return (
-    <Router basename="/JurChat">
+    <Router>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
