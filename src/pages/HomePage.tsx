@@ -16,6 +16,7 @@ const HomePage: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const [isDragOver, setIsDragOver] = useState(false);
+  const navigate = useNavigate();
   const username = sessionStorage.getItem('username');
   const navigate = useNavigate();
 
