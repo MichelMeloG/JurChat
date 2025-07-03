@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/JurChat/static/css/main.9e90eb20.css",
-    "main.js": "/JurChat/static/js/main.04865d17.js",
+    "main.js": "/JurChat/static/js/main.c1385a00.js",
     "static/js/453.89c34276.chunk.js": "/JurChat/static/js/453.89c34276.chunk.js",
     "index.html": "/JurChat/index.html",
     "main.9e90eb20.css.map": "/JurChat/static/css/main.9e90eb20.css.map",
-    "main.04865d17.js.map": "/JurChat/static/js/main.04865d17.js.map",
+    "main.c1385a00.js.map": "/JurChat/static/js/main.c1385a00.js.map",
     "453.89c34276.chunk.js.map": "/JurChat/static/js/453.89c34276.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.9e90eb20.css",
-    "static/js/main.04865d17.js"
+    "static/js/main.c1385a00.js"
   ]
 }
