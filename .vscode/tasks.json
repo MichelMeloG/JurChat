@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Instalar dependências e iniciar frontend",
+			"command": "npm install && npm start",
+			"group": "build",
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"args": []
+		}
+	]
+}
