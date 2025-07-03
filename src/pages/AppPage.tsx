@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getDocument, chatWithDocument, getOriginalDocument } from '../services/api';
 import '../styles/AppPage.css';
-import { FiArrowUpCircle, FiClock, FiLogOut, FiDownload } from 'react-icons/fi';
+import { FiArrowUpCircle, FiClock, FiLogOut, FiDownload, FiMenu, FiX } from 'react-icons/fi';
 
 interface Message {
   id: string;
@@ -119,6 +119,7 @@ const AppPage: React.FC = () => {
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'traducao' | 'clausulas' | 'original'>('traducao');
   const [searchTerm, setSearchTerm] = useState('');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const documentName = id ? decodeURIComponent(id) : 'Novo documento';
 
@@ -242,7 +243,9 @@ const AppPage: React.FC = () => {
     <div className="app-root-centered">
       <header className="navbar">
         <div className="navbar-logo" onClick={() => window.location.href = '/'}>Jurchat</div>
-        <nav className="navbar-menu">
+        
+        {/* Desktop Navigation */}
+        <nav className="navbar-menu desktop-menu">
           <button className="navbar-btn" onClick={() => window.location.href = '/'} style={{background: 'none', color: '#22223b', fontWeight: 500}}>
             <span className="navbar-btn-icon">
               <FiArrowUpCircle size={20} color="#22223b" />
@@ -256,7 +259,9 @@ const AppPage: React.FC = () => {
             Histórico
           </button>
         </nav>
-        <div className="navbar-user">
+
+        {/* Desktop User Section */}
+        <div className="navbar-user desktop-user">
           <span>Olá, {sessionStorage.getItem('username')}</span>
           <button className="navbar-logout" onClick={() => { sessionStorage.removeItem('username'); window.location.href = '/login'; }}>
             <span className="navbar-logout-icon">
@@ -265,6 +270,58 @@ const AppPage: React.FC = () => {
             Sair
           </button>
         </div>
+
+        {/* Mobile Hamburger Button */}
+        <button 
+          className="mobile-menu-toggle"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle mobile menu"
+        >
+          {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+        </button>
+
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <>
+            <div className="mobile-menu-overlay" onClick={() => setIsMobileMenuOpen(false)}></div>
+            <div className="mobile-menu">
+              <nav className="mobile-nav">
+                <button 
+                  className="mobile-nav-btn" 
+                  onClick={() => { window.location.href = '/'; setIsMobileMenuOpen(false); }}
+                >
+                  <span className="mobile-nav-icon">
+                    <FiArrowUpCircle size={20} />
+                  </span>
+                  Dashboard
+                </button>
+                <button 
+                  className="mobile-nav-btn mobile-nav-btn-active"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <span className="mobile-nav-icon">
+                    <FiClock size={20} />
+                  </span>
+                  Histórico
+                </button>
+              </nav>
+              <div className="mobile-user-section">
+                <div className="mobile-user-greeting">
+                  Olá, {sessionStorage.getItem('username')}
+                </div>
+                <button 
+                  className="mobile-logout-btn" 
+                  onClick={() => { sessionStorage.removeItem('username'); window.location.href = '/login'; }}
+                >
+                  <span className="mobile-logout-icon">
+                    <FiLogOut size={20} />
+                  </span>
+                  Sair
+                </button>
+              </div>
+            </div>
+          </>
+        )}
       </header>
       <main className="app-main-centered">
         <div className="app-card app-card-flex">

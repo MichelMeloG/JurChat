@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getHistory } from '../services/api';
 import '../styles/HistoricoPage.css';
-import { FiArrowUpCircle, FiClock, FiLogOut, FiUser, FiFileText, FiCalendar, FiArrowRight } from 'react-icons/fi';
+import { FiArrowUpCircle, FiClock, FiLogOut, FiUser, FiFileText, FiCalendar, FiArrowRight, FiMenu, FiX } from 'react-icons/fi';
 
 interface Document {
   id: string;
@@ -13,6 +13,7 @@ interface Document {
 const HistoricoPage: React.FC = () => {
   const [history, setHistory] = useState<Document[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const username = sessionStorage.getItem('username');
   const navigate = useNavigate();
 
@@ -38,7 +39,9 @@ const HistoricoPage: React.FC = () => {
     <div className="historico-root-centered">
       <header className="navbar">
         <div className="navbar-logo" onClick={() => navigate('/')}>Jurchat</div>
-        <nav className="navbar-menu">
+        
+        {/* Desktop Navigation */}
+        <nav className="navbar-menu desktop-menu">
           <button className="navbar-btn" onClick={() => navigate('/')}
             style={{background: 'none', color: '#22223b', fontWeight: 500}}>
             <span className="navbar-btn-icon">
@@ -53,7 +56,9 @@ const HistoricoPage: React.FC = () => {
             Histórico
           </button>
         </nav>
-        <div className="navbar-user">
+
+        {/* Desktop User Section */}
+        <div className="navbar-user desktop-user">
           <span>Olá, {username}</span>
           <button className="navbar-logout" onClick={() => { sessionStorage.removeItem('username'); navigate('/login'); }}>
             <span className="navbar-logout-icon">
@@ -62,6 +67,58 @@ const HistoricoPage: React.FC = () => {
             Sair
           </button>
         </div>
+
+        {/* Mobile Hamburger Button */}
+        <button 
+          className="mobile-menu-toggle"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle mobile menu"
+        >
+          {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+        </button>
+
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <>
+            <div className="mobile-menu-overlay" onClick={() => setIsMobileMenuOpen(false)}></div>
+            <div className="mobile-menu">
+              <nav className="mobile-nav">
+                <button 
+                  className="mobile-nav-btn" 
+                  onClick={() => { navigate('/'); setIsMobileMenuOpen(false); }}
+                >
+                  <span className="mobile-nav-icon">
+                    <FiArrowUpCircle size={20} />
+                  </span>
+                  Dashboard
+                </button>
+                <button 
+                  className="mobile-nav-btn mobile-nav-btn-active"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <span className="mobile-nav-icon">
+                    <FiClock size={20} />
+                  </span>
+                  Histórico
+                </button>
+              </nav>
+              <div className="mobile-user-section">
+                <div className="mobile-user-greeting">
+                  Olá, {username}
+                </div>
+                <button 
+                  className="mobile-logout-btn" 
+                  onClick={() => { sessionStorage.removeItem('username'); navigate('/login'); setIsMobileMenuOpen(false); }}
+                >
+                  <span className="mobile-logout-icon">
+                    <FiLogOut size={20} />
+                  </span>
+                  Sair
+                </button>
+              </div>
+            </div>
+          </>
+        )}
       </header>
       <main className="historico-main-centered">
         <div className="historico-title-row">

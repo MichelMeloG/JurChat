@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { uploadFile, testUploadEndpoint, uploadFileWithFetch, uploadFileDebug } from '../services/api';
-import { FiArrowUpCircle, FiClock, FiLogOut, FiUpload } from 'react-icons/fi';
+import { FiArrowUpCircle, FiClock, FiLogOut, FiUpload, FiMenu, FiX } from 'react-icons/fi';
 import '../styles/HomePage.css';
 
 const HomePage: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const username = sessionStorage.getItem('username');
   const navigate = useNavigate();
 
@@ -167,7 +168,9 @@ const HomePage: React.FC = () => {
       {/* Navbar */}
       <header className="navbar">
         <div className="navbar-logo">Jurchat</div>
-        <nav className="navbar-menu">
+        
+        {/* Desktop Navigation */}
+        <nav className="navbar-menu desktop-menu">
           <button className="navbar-btn navbar-btn-active" style={{background: '#e0edff', color: '#2563eb', fontWeight: 600}}>
             <span className="navbar-btn-icon">
               <FiArrowUpCircle size={20} color="#2563eb" />
@@ -181,7 +184,9 @@ const HomePage: React.FC = () => {
             Histórico
           </button>
         </nav>
-        <div className="navbar-user">
+
+        {/* Desktop User Section */}
+        <div className="navbar-user desktop-user">
           <span>Olá, {username}</span>
           <button className="navbar-logout" onClick={handleLogout}>
             <span className="navbar-logout-icon">
@@ -190,6 +195,58 @@ const HomePage: React.FC = () => {
             Sair
           </button>
         </div>
+
+        {/* Mobile Hamburger Button */}
+        <button 
+          className="mobile-menu-toggle"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle mobile menu"
+        >
+          {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+        </button>
+
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <>
+            <div className="mobile-menu-overlay" onClick={() => setIsMobileMenuOpen(false)}></div>
+            <div className="mobile-menu">
+              <nav className="mobile-nav">
+                <button 
+                  className="mobile-nav-btn mobile-nav-btn-active"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <span className="mobile-nav-icon">
+                    <FiArrowUpCircle size={20} />
+                  </span>
+                  Dashboard
+                </button>
+                <button 
+                  className="mobile-nav-btn" 
+                  onClick={() => { navigate('/historico'); setIsMobileMenuOpen(false); }}
+                >
+                  <span className="mobile-nav-icon">
+                    <FiClock size={20} />
+                  </span>
+                  Histórico
+                </button>
+              </nav>
+              <div className="mobile-user-section">
+                <div className="mobile-user-greeting">
+                  Olá, {username}
+                </div>
+                <button 
+                  className="mobile-logout-btn" 
+                  onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
+                >
+                  <span className="mobile-logout-icon">
+                    <FiLogOut size={20} />
+                  </span>
+                  Sair
+                </button>
+              </div>
+            </div>
+          </>
+        )}
       </header>
       {/* Card centralizado */}
       <main className="upload-main-centered">
