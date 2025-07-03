@@ -69,6 +69,104 @@ body {
   overflow: hidden;
 }
 
+/* Layout principal para AppPage, seguindo padrão das outras páginas */
+.app-root-centered {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main-centered {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 2rem;
+  min-height: 0;
+}
+
+.app-title-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.app-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #18181b;
+  margin: 0;
+}
+
+.app-card {
+  background: #fff;
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 32px 0 rgba(0,0,0,0.07);
+  padding: 2.5rem 2.5rem 2rem 2.5rem;
+  min-width: 350px;
+  max-width: 1200px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Novo estilo para layout em três colunas (documento, análise, chat) */
+.app-card-flex {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1300px;
+  min-width: 350px;
+  background: #fff;
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 32px 0 rgba(0,0,0,0.07);
+  padding: 2.5rem 2.5rem 2rem 2.5rem;
+  height: calc(100vh - 120px); /* Ajuste para não ultrapassar o viewport */
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.app-col {
+  display: flex;
+  flex-direction: column;
+  background: none;
+  border-radius: 0.75rem;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.app-col-left {
+  max-width: 340px;
+  min-width: 0;
+}
+
+.app-col-center {
+  min-width: 0;
+}
+
+.app-col-right {
+  max-width: 340px;
+  min-width: 0;
+}
+
+@media (max-width: 1100px) {
+  .app-card-flex {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 1.5rem;
+    padding: 1.5rem 0.5rem;
+  }
+  .app-col-left, .app-col-center, .app-col-right {
+    max-width: 100%;
+  }
+}
+
 /* Original Document Panel - Left */
 .original-document-panel {
   background-color: var(--card-background);
@@ -100,8 +198,11 @@ body {
   margin-bottom: 1rem;
   border: 1px solid var(--border-color);
   font-size: 0.875rem;
+}
+
+.button-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 
@@ -115,16 +216,25 @@ body {
   background-color: var(--primary-color);
   color: white;
   border: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 0.4rem;
+  padding: 0.3rem 7rem;
+  border-radius: 0.5rem;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
+  font-weight: 500;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
 }
 
 .download-button:hover {
   background-color: var(--primary-hover, #0a5c8a);
   transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.download-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .document-text {
@@ -190,6 +300,7 @@ body {
   display: flex;
   gap: 0.5rem;
   margin-top: 1rem;
+  justify-content: center;
 }
 
 .tab-button {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getDocument, chatWithDocument, getOriginalDocument } from '../services/api';
 import '../styles/AppPage.css';
+import { FiArrowUpCircle, FiClock, FiLogOut, FiDownload } from 'react-icons/fi';
 
 interface Message {
   id: string;
@@ -238,213 +239,255 @@ const AppPage: React.FC = () => {
   };
 
   return (
-    <div className="app-container">
-      <div className="app-header">
-        <h1 className="app-title">{documentName}</h1>
-        <div className="app-nav">
-          <Link to="/" className="nav-button">← Voltar</Link>
+    <div className="app-root-centered">
+      <header className="navbar">
+        <div className="navbar-logo" onClick={() => window.location.href = '/'}>Jurchat</div>
+        <nav className="navbar-menu">
+          <button className="navbar-btn" onClick={() => window.location.href = '/'} style={{background: 'none', color: '#22223b', fontWeight: 500}}>
+            <span className="navbar-btn-icon">
+              <FiArrowUpCircle size={20} color="#22223b" />
+            </span>
+            Dashboard
+          </button>
+          <button className="navbar-btn navbar-btn-active" style={{background: '#e0edff', color: '#2563eb', fontWeight: 600}}>
+            <span className="navbar-btn-icon">
+              <FiClock size={20} color="#2563eb" />
+            </span>
+            Histórico
+          </button>
+        </nav>
+        <div className="navbar-user">
+          <span>Olá, {sessionStorage.getItem('username')}</span>
+          <button className="navbar-logout" onClick={() => { sessionStorage.removeItem('username'); window.location.href = '/login'; }}>
+            <span className="navbar-logout-icon">
+              <FiLogOut size={20} color="#475569" />
+            </span>
+            Sair
+          </button>
         </div>
-      </div>
-
-      <div className="app-content">
-        {/* Documento Original - Lado Esquerdo */}
-        <div className="original-document-panel">
-          <h2 className="panel-title">📄 Documento Original</h2>
-          {isLoading ? (
-            <div className="loading-state">
-              <div className="loading-spinner"></div>
-              Carregando documento...
-            </div>
-          ) : (
-            <div className="original-document-content">
-              <div className="document-viewer">
-                <p className="document-info">
-                  <span>
-                    <strong>Arquivo:</strong> {documentName}
-                    {parsedDocument?.originalText?.includes('processado') && (
-                      <span className="processed-indicator"> (Processado pela IA)</span>
-                    )}
-                  </span>
-                  <button 
-                    className="download-button"
-                    onClick={() => {
-                      const textToDownload = parsedDocument?.originalText || 'Conteúdo não disponível';
-                      const blob = new Blob([textToDownload], { type: 'text/plain' });
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement('a');
-                      a.href = url;
-                      a.download = `${documentName}_original.txt`;
-                      document.body.appendChild(a);
-                      a.click();
-                      document.body.removeChild(a);
-                      URL.revokeObjectURL(url);
-                    }}
-                  >
-                    📥 Baixar
-                  </button>
-                </p>
-                <div className="document-text">
-                  {parsedDocument?.originalText || 'Conteúdo não disponível'}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Análise do Documento - Centro */}
-        <div className="analysis-panel">
-          <div className="analysis-header">
-            <h2 className="panel-title">🤖 Análise Jurídica</h2>
-            <div className="search-container">
-              <input
-                type="text"
-                placeholder="🔍 Buscar no documento..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-              />
-            </div>
-            <div className="tab-buttons">
-              <button 
-                className={`tab-button ${activeTab === 'traducao' ? 'active' : ''}`}
-                onClick={() => setActiveTab('traducao')}
-              >
-                Tradução Simples
-              </button>
-              <button 
-                className={`tab-button ${activeTab === 'clausulas' ? 'active' : ''}`}
-                onClick={() => setActiveTab('clausulas')}
-              >
-                Resumo das Cláusulas
-              </button>
-            </div>
-          </div>
-
-          <div className="analysis-content">
+      </header>
+      <main className="app-main-centered">
+        <div className="app-card app-card-flex">
+          <div className="app-col app-col-left">
+            <h2 className="panel-title">📄 Documento Original</h2>
             {isLoading ? (
               <div className="loading-state">
                 <div className="loading-spinner"></div>
-                Processando análise...
+                Carregando documento...
               </div>
             ) : (
-              <>
-                {activeTab === 'traducao' && (
-                  <div className="traducao-section">
-                    <h3 className="section-title">Tradução em Linguagem Simples</h3>
-                    <div 
-                      className="traducao-content"
-                      dangerouslySetInnerHTML={{
-                        __html: parsedDocument?.traducaoColoquial ? 
-                          highlightText(formatText(parsedDocument.traducaoColoquial), searchTerm) : 
-                          'Tradução não disponível'
+              <div className="original-document-content">
+                <div className="document-viewer">
+                  <div className="document-info" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '12px', textAlign: 'center' }}>
+                    <div style={{ marginBottom: 12 }}>
+                      <div style={{ fontWeight: 500, fontSize: 13, color: '#64748b', marginBottom: 4 }}>
+                        Arquivo
+                      </div>
+                      <div style={{ fontWeight: 600, fontSize: 15, color: '#1e293b', wordBreak: 'break-word', maxWidth: '100%' }}>
+                        {documentName}
+                        {parsedDocument?.originalText?.includes('processado') && (
+                          <div style={{ fontSize: 12, color: '#059669', marginTop: 2 }}>(Processado pela IA)</div>
+                        )}
+                      </div>
+                    </div>
+                    <button 
+                      className="download-button"
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: 6, 
+                        background: '#2563eb', 
+                        color: '#fff', 
+                        border: 'none', 
+                        borderRadius: 6, 
+                        padding: '8px 16px', 
+                        fontWeight: 500, 
+                        fontSize: 14, 
+                        boxShadow: '0 2px 8px rgba(37, 99, 235, 0.2)', 
+                        cursor: 'pointer', 
+                        transition: 'all 0.2s ease'
                       }}
-                    />
+                      onClick={() => {
+                        const textToDownload = parsedDocument?.originalText || 'Conteúdo não disponível';
+                        const blob = new Blob([textToDownload], { type: 'text/plain' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${documentName}_original.txt`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#1d4ed8';
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#2563eb';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      }}
+                    >
+                      <FiDownload size={20} color="#fff" />
+                      Baixar original
+                    </button>
                   </div>
-                )}
+                  
+                  <div className="document-text">
+                    {parsedDocument?.originalText || 'Conteúdo não disponível'}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="app-col app-col-center">
+            <div className="analysis-header">
+              <h2 className="panel-title">🤖 Análise Jurídica</h2>
+              <div className="search-container">
+                <input
+                  type="text"
+                  placeholder="🔍 Buscar no documento..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+              <div className="tab-buttons">
+                <button 
+                  className={`tab-button ${activeTab === 'traducao' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('traducao')}
+                >
+                  Tradução Simples
+                </button>
+                <button 
+                  className={`tab-button ${activeTab === 'clausulas' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('clausulas')}
+                >
+                  Resumo das Cláusulas
+                </button>
+              </div>
+            </div>
+            <div className="analysis-content">
+              {isLoading ? (
+                <div className="loading-state">
+                  <div className="loading-spinner"></div>
+                  Processando análise...
+                </div>
+              ) : (
+                <>
+                  {activeTab === 'traducao' && (
+                    <div className="traducao-section">
+                      <h3 className="section-title">Tradução em Linguagem Simples</h3>
+                      <div 
+                        className="traducao-content"
+                        dangerouslySetInnerHTML={{
+                          __html: parsedDocument?.traducaoColoquial ? 
+                            highlightText(formatText(parsedDocument.traducaoColoquial), searchTerm) : 
+                            'Tradução não disponível'
+                        }}
+                      />
+                    </div>
+                  )}
 
-                {activeTab === 'clausulas' && (
-                  <div className="clausulas-section">
-                    <h3 className="section-title">Resumo das Cláusulas</h3>
-                    <div className="clausulas-content">
-                      {parsedDocument?.clausulas && parsedDocument.clausulas.length > 0 ? (
-                        parsedDocument.clausulas
-                          .filter(clausula => 
-                            !searchTerm.trim() || 
-                            clausula.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            clausula.resumo.toLowerCase().includes(searchTerm.toLowerCase())
-                          )
-                          .map((clausula, index) => (
-                            <div key={index} className="clausula-item">
-                              <h4 
-                                className="clausula-titulo"
-                                dangerouslySetInnerHTML={{
-                                  __html: highlightText(clausula.titulo, searchTerm)
-                                }}
-                              />
-                              <p 
-                                className="clausula-resumo"
-                                dangerouslySetInnerHTML={{
-                                  __html: highlightText(formatText(clausula.resumo), searchTerm)
-                                }}
-                              />
-                            </div>
-                          ))
-                      ) : (
-                        <p className="no-content">
-                          {searchTerm.trim() ? 'Nenhuma cláusula encontrada para a busca' : 'Nenhuma cláusula encontrada'}
-                        </p>
-                      )}
+                  {activeTab === 'clausulas' && (
+                    <div className="clausulas-section">
+                      <h3 className="section-title">Resumo das Cláusulas</h3>
+                      <div className="clausulas-content">
+                        {parsedDocument?.clausulas && parsedDocument.clausulas.length > 0 ? (
+                          parsedDocument.clausulas
+                            .filter(clausula => 
+                              !searchTerm.trim() || 
+                              clausula.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                              clausula.resumo.toLowerCase().includes(searchTerm.toLowerCase())
+                            )
+                            .map((clausula, index) => (
+                              <div key={index} className="clausula-item">
+                                <h4 
+                                  className="clausula-titulo"
+                                  dangerouslySetInnerHTML={{
+                                    __html: highlightText(clausula.titulo, searchTerm)
+                                  }}
+                                />
+                                <p 
+                                  className="clausula-resumo"
+                                  dangerouslySetInnerHTML={{
+                                    __html: highlightText(formatText(clausula.resumo), searchTerm)
+                                  }}
+                                />
+                              </div>
+                            ))
+                        ) : (
+                          <p className="no-content">
+                            {searchTerm.trim() ? 'Nenhuma cláusula encontrada para a busca' : 'Nenhuma cláusula encontrada'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+          <div className="app-col app-col-right">
+            <div className="chat-header">
+              <h3 className="panel-title">💬 Chat com IA</h3>
+              <p className="chat-subtitle">Faça perguntas sobre o documento</p>
+            </div>
+            <div className="chat-messages">
+              {messages.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-state-icon">💬</div>
+                  <p className="empty-state-text">Inicie uma conversa</p>
+                  <p className="empty-state-subtext">Faça perguntas sobre o documento</p>
+                </div>
+              ) : (
+                messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`message ${message.isUser ? 'user' : 'assistant'}`}
+                  >
+                    <div className="message-avatar">
+                      {message.isUser ? '👤' : '🤖'}
+                    </div>
+                    <div className="message-content">
+                      {message.content}
                     </div>
                   </div>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Chat - Lado Direito */}
-        <div className="chat-panel">
-          <div className="chat-header">
-            <h3 className="panel-title">💬 Chat com IA</h3>
-            <p className="chat-subtitle">Faça perguntas sobre o documento</p>
-          </div>
-
-          <div className="chat-messages">
-            {messages.length === 0 ? (
-              <div className="empty-state">
-                <div className="empty-state-icon">💬</div>
-                <p className="empty-state-text">Inicie uma conversa</p>
-                <p className="empty-state-subtext">Faça perguntas sobre o documento</p>
-              </div>
-            ) : (
-              messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`message ${message.isUser ? 'user' : 'assistant'}`}
-                >
-                  <div className="message-avatar">
-                    {message.isUser ? '👤' : '🤖'}
-                  </div>
+                ))
+              )}
+              {isChatLoading && (
+                <div className="message assistant">
+                  <div className="message-avatar">🤖</div>
                   <div className="message-content">
-                    {message.content}
+                    <div className="loading-spinner"></div>
+                    Pensando...
                   </div>
                 </div>
-              ))
-            )}
-            
-            {isChatLoading && (
-              <div className="message assistant">
-                <div className="message-avatar">🤖</div>
-                <div className="message-content">
-                  <div className="loading-spinner"></div>
-                  Pensando...
-                </div>
+              )}
+            </div>
+            <div className="chat-input-area">
+              <div className="chat-input-container">
+                <textarea
+                  className="chat-input"
+                  placeholder="Digite sua pergunta sobre o documento..."
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  rows={2}
+                  disabled={isChatLoading}
+                />
+                <button
+                  className="send-button"
+                  onClick={handleSendMessage}
+                  disabled={!inputMessage.trim() || isChatLoading}
+                >
+                  ➤
+                </button>
               </div>
-            )}
-          </div>
-
-          <div className="chat-input-area">
-            <div className="chat-input-container">
-              <textarea
-                className="chat-input"
-                placeholder="Digite sua pergunta sobre o documento..."
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                rows={2}
-                disabled={isChatLoading}
-              />
-              <button
-                className="send-button"
-                onClick={handleSendMessage}
-                disabled={!inputMessage.trim() || isChatLoading}
-              >
-                ➤
-              </button>
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

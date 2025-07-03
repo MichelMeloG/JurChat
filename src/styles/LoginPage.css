@@ -62,11 +62,28 @@
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .login-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+}
+
+.login-button .loading-state {
+  padding: 0;
+  color: white;
+  gap: 0.5rem;
+}
+
+.login-button .loading-spinner {
+  width: 1.2rem;
+  height: 1.2rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
 }
 
 .login-footer {

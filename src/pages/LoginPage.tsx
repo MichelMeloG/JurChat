@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../services/api';
+import { FiUser, FiLock } from 'react-icons/fi';
 import '../styles/LoginPage.css';
 
 const LoginPage: React.FC = () => {
@@ -38,25 +39,31 @@ const LoginPage: React.FC = () => {
         
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
-            <input
-              type="text"
-              className="input"
-              placeholder="Digite seu nome de usuário"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
+            <div className="input-with-icon">
+              <FiUser className="input-icon" size={20} />
+              <input
+                type="text"
+                className="input input-with-icon-field"
+                placeholder="Digite seu nome de usuário"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </div>
           </div>
           
           <div className="form-group">
-            <input
-              type="password"
-              className="input"
-              placeholder="Digite sua senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="input-with-icon">
+              <FiLock className="input-icon" size={20} />
+              <input
+                type="password"
+                className="input input-with-icon-field"
+                placeholder="Digite sua senha"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
           </div>
           
           <button 
@@ -64,7 +71,11 @@ const LoginPage: React.FC = () => {
             className="login-button"
             disabled={isLoading}
           >
-            {isLoading ? 'Entrando...' : 'Entrar'}
+            {isLoading ? (
+              <div className="loading-state">
+                <div className="loading-spinner"></div>             
+              </div>
+            ) : 'Entrar'}
           </button>
         </form>
         

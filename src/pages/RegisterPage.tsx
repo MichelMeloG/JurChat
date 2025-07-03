@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { register } from '../services/api';
+import { FiUser, FiMail, FiLock } from 'react-icons/fi';
 import '../styles/RegisterPage.css';
 
 const RegisterPage: React.FC = () => {
@@ -39,39 +40,45 @@ const RegisterPage: React.FC = () => {
         
         <form onSubmit={handleSubmit} className="register-form">
           <div className="form-group">
-            <label className="form-label">Nome de usuário</label>
-            <input
-              type="text"
-              className="input"
-              placeholder="Digite seu nome de usuário"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
+            <div className="input-with-icon">
+              <FiUser className="input-icon" size={20} />
+              <input
+                type="text"
+                className="input input-with-icon-field"
+                placeholder="Digite seu nome de usuário"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
           </div>
           
           <div className="form-group">
-            <label className="form-label">Email</label>
-            <input
-              type="email"
-              className="input"
-              placeholder="Digite seu email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+            <div className="input-with-icon">
+              <FiMail className="input-icon" size={20} />
+              <input
+                type="email"
+                className="input input-with-icon-field"
+                placeholder="Digite seu email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
           </div>
           
           <div className="form-group">
-            <label className="form-label">Senha</label>
-            <input
-              type="password"
-              className="input"
-              placeholder="Digite sua senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="input-with-icon">
+              <FiLock className="input-icon" size={20} />
+              <input
+                type="password"
+                className="input input-with-icon-field"
+                placeholder="Digite sua senha"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
           </div>
           
           <button 
@@ -79,7 +86,11 @@ const RegisterPage: React.FC = () => {
             className="register-button"
             disabled={isLoading}
           >
-            {isLoading ? 'Cadastrando...' : 'Cadastrar'}
+            {isLoading ? (
+              <div className="loading-state">
+                <div className="loading-spinner"></div>
+              </div>
+            ) : 'Cadastrar'}
           </button>
         </form>
         

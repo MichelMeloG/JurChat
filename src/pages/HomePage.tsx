@@ -1,72 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { uploadFile, getHistory, testUploadEndpoint, uploadFileWithFetch, uploadFileDebug } from '../services/api';
-import { debugAPIResponse } from '../debug';
+import { useNavigate } from 'react-router-dom';
+import { uploadFile, testUploadEndpoint, uploadFileWithFetch, uploadFileDebug } from '../services/api';
+import { FiArrowUpCircle, FiClock, FiLogOut, FiUpload } from 'react-icons/fi';
 import '../styles/HomePage.css';
 
-interface Document {
-  id: string;
-  name: string;
-  uploadDate: string;
-  filePath?: string; // Add optional file path for better identification
-}
-
 const HomePage: React.FC = () => {
-  const [history, setHistory] = useState<Document[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const [isDragOver, setIsDragOver] = useState(false);
-  const navigate = useNavigate();
   const username = sessionStorage.getItem('username');
   const navigate = useNavigate();
-
-  const fetchHistory = useCallback(async () => {
-    if (username) {
-      setIsLoadingHistory(true);
-      try {
-        console.log('Fetching document history for username:', username);
-        const data = await getHistory(username);
-        console.log('History data received:', data);
-        console.log('Number of documents:', data.length);
-        
-        if (data.length > 0) {
-          console.log('Document names:', data.map(doc => doc.name));
-        }
-        
-        // Add a test document if no documents are returned
-        if (data.length === 0) {
-          console.log('No documents found, adding test document');
-          const testDoc: Document = {
-            id: 'test-doc-1',
-            name: 'Documento_Teste.pdf',
-            uploadDate: new Date().toLocaleDateString('pt-BR'),
-          };
-          setHistory([testDoc]);
-        } else {
-          setHistory(data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch history', error);
-        // Add a test document for debugging
-        const testDoc: Document = {
-          id: 'test-doc-fallback',
-          name: 'Documento_Teste_Fallback.pdf',
-          uploadDate: new Date().toLocaleDateString('pt-BR'),
-        };
-        setHistory([testDoc]);
-      } finally {
-        setIsLoadingHistory(false);
-      }
-    }
-  }, [username]);
-
-  useEffect(() => {
-    fetchHistory();
-  }, [fetchHistory]);
-
-  const handleRefresh = () => {
-    fetchHistory();
-  };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -169,16 +111,8 @@ const HomePage: React.FC = () => {
         
         console.log('Upload result:', result);
         
-        // Add the new document to the history list immediately
-        const newDocument: Document = {
-          id: Date.now().toString(),
-          name: file.name,
-          uploadDate: new Date().toLocaleDateString('pt-BR')
-        };
-        setHistory(prev => [newDocument, ...prev]);
-        
         // Show success message
-        alert('Arquivo enviado com sucesso!');
+        // alert('Arquivo enviado com sucesso!');
         
         // Redirect to app page with the file name after a short delay
         setTimeout(() => {
@@ -228,127 +162,72 @@ const HomePage: React.FC = () => {
     }
   };
 
-  const handleDebugHistory = async () => {
-    try {
-      console.log('=== DEBUG HISTORY ===');
-      console.log('Username:', username);
-      if (username) {
-        const data = await debugAPIResponse(username);
-        console.log('Debug result:', data);
-        alert('Dados do histórico (veja o console): ' + JSON.stringify(data, null, 2));
-      }
-    } catch (error) {
-      console.error('Erro ao buscar histórico:', error);
-      alert('Erro ao buscar histórico: ' + error);
-    }
-  };
-
   return (
-    <div className="home-container">
-      <div className="home-header">
-        <div>
-          <h1 className="home-title">JurChat</h1>
-          <p className="home-subtitle">Bem-vindo, {username}!</p>
-        </div>
-        <button onClick={handleLogout} className="logout-button">
-          Sair
-        </button>
-      </div>
-      
-      <div className="home-content">          <div className="upload-section">
-          <h2 className="upload-title">Novo Documento</h2>
-          <button onClick={handleTestEndpoint} style={{marginBottom: '10px', padding: '5px 10px'}}>
-            Testar Endpoint
+    <div className="home-root-centered">
+      {/* Navbar */}
+      <header className="navbar">
+        <div className="navbar-logo">Jurchat</div>
+        <nav className="navbar-menu">
+          <button className="navbar-btn navbar-btn-active" style={{background: '#e0edff', color: '#2563eb', fontWeight: 600}}>
+            <span className="navbar-btn-icon">
+              <FiArrowUpCircle size={20} color="#2563eb" />
+            </span>
+            Dashboard
           </button>
-          <button onClick={handleDebugHistory} style={{marginBottom: '10px', marginLeft: '10px', padding: '5px 10px'}}>
-            Debug Histórico
+          <button className="navbar-btn" onClick={() => navigate('/historico')} style={{background: 'none', color: '#22223b', fontWeight: 500}}>
+            <span className="navbar-btn-icon">
+              <FiClock size={20} color="#22223b" />
+            </span>
+            Histórico
           </button>
-          <div
-            className={`file-upload-area ${isDragOver ? 'dragover' : ''}`}
-            onClick={handleFileAreaClick}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            style={{ cursor: isUploading ? 'not-allowed' : 'pointer' }}
-          >
-            <div className="upload-icon">📄</div>
-            <p className="upload-text">
-              {isUploading ? 'Enviando arquivo...' : 
-               isDragOver ? 'Solte o arquivo aqui' : 
-               'Clique ou arraste um arquivo aqui'}
-            </p>
-            <p className="upload-subtext">PDF, DOC, DOCX até 10MB</p>
-          </div>
-          <input
-            id="file-input"
-            type="file"
-            className="file-input"
-            onChange={handleFileUpload}
-            accept=".pdf,.doc,.docx"
-            disabled={isUploading}
-            style={{ display: 'none' }}
-          />
+        </nav>
+        <div className="navbar-user">
+          <span>Olá, {username}</span>
+          <button className="navbar-logout" onClick={handleLogout}>
+            <span className="navbar-logout-icon">
+              <FiLogOut size={20} color="#475569" />
+            </span>
+            Sair
+          </button>
         </div>
-        
-        <div className="history-section">
-          <div className="history-header">
-            <h2 className="history-title">
-              📚 Histórico de Documentos
-            </h2>
-            <button 
-              onClick={handleRefresh} 
-              className="refresh-button"
-              disabled={isLoadingHistory}
-            >
-              {isLoadingHistory ? '⟳' : '↻'} Atualizar
-            </button>
-          </div>
-          
-          {isLoadingHistory ? (
-            <div className="loading-state">
-              <div className="loading-spinner"></div>
-              Carregando documentos...
-            </div>
-          ) : history.length > 0 ? (
-            <div className="history-list">
-              {history.map((doc) => {
-                const documentPath = `/app/${encodeURIComponent(doc.name)}`;
-                console.log('Rendering document:', doc.name, 'Path:', documentPath);
-                
-                return (
-                  <Link 
-                    key={doc.id} 
-                    to={documentPath}
-                    className="history-item"
-                    onClick={(e) => {
-                      console.log('Clicked on document:', doc.name);
-                      console.log('Navigating to:', documentPath);
-                      // Allow the Link to handle navigation naturally
-                    }}
-                  >
-                    <div className="history-item-icon">
-                      📄
-                    </div>
-                    <div className="history-item-content">
-                      <div className="history-item-name">{doc.name}</div>
-                      <div className="history-item-date">Enviado em: {doc.uploadDate}</div>
-                    </div>
-                    <div className="history-item-action">
-                      →
-                    </div>
-                  </Link>
-                );
-              })}
+      </header>
+      {/* Card centralizado */}
+      <main className="upload-main-centered">
+        <div className="upload-card-centered">
+          <h2 className="upload-card-title">Upload de Documento</h2>
+          {isUploading ? (
+            <div className="upload-loading-state">
+              <div className="upload-loading-spinner"></div>
+              <div className="upload-loading-text">Enviando arquivo...</div>
             </div>
           ) : (
-            <div className="empty-state">
-              <div className="empty-state-icon">📂</div>
-              <p className="empty-state-text">Nenhum documento encontrado</p>
-              <p className="empty-state-subtext">Faça upload do seu primeiro documento para começar</p>
-            </div>
+            <>
+              <div className={`file-upload-area-centered ${isDragOver ? 'dragover' : ''}`}
+                onClick={handleFileAreaClick}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                style={{ cursor: isUploading ? 'not-allowed' : 'pointer' }}
+              >
+                <div className="upload-card-uploadicon">
+                  <FiUpload size={40} color="#94a3b8" />
+                </div>
+                <div className="upload-card-text-main">Arraste seu PDF aqui</div>
+                <div className="upload-card-text-sub">ou clique para selecionar um arquivo</div>
+              </div>
+              <input
+                id="file-input"
+                type="file"
+                className="file-input"
+                onChange={handleFileUpload}
+                accept=".pdf,.doc,.docx"
+                disabled={isUploading}
+                style={{ display: 'none' }}
+              />
+            </>
           )}
         </div>
-      </div>
+      </main>
     </div>
   );
 };

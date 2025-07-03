@@ -85,6 +85,29 @@ body {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
+/* Input with Icon Styles */
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.75rem;
+  color: var(--text-secondary);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.input-with-icon-field {
+  padding-left: 3rem;
+}
+
+.input-with-icon:focus-within .input-icon {
+  color: var(--primary-color);
+}
+
 /* Common Card Styles */
 .card {
   background-color: var(--card-background);
@@ -96,4 +119,31 @@ body {
 .card-lg {
   box-shadow: var(--shadow-lg);
   padding: 3rem;
+}
+
+/* Loading Spinner */
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.loading-spinner {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid var(--border-color);
+  border-top: 2px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
