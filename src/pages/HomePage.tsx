@@ -175,20 +175,7 @@ const HomePage: React.FC = () => {
 
   const handleLogout = () => {
     sessionStorage.removeItem('username');
-    navigate('/login');
-  };
-
-  const handleTestEndpoint = async () => {
-    try {
-      const result = await testUploadEndpoint();
-      if (result.success) {
-        alert('Endpoint está funcionando: ' + JSON.stringify(result.data));
-      } else {
-        alert('Endpoint com erro: ' + result.error);
-      }
-    } catch (error) {
-      alert('Erro ao testar endpoint: ' + error);
-    }
+    navigate('/JurChat/login');
   };
 
   return (

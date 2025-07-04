@@ -258,7 +258,7 @@ const AppPage: React.FC = () => {
         {/* Desktop User Section */}
         <div className="navbar-user desktop-user">
           <span>Olá, {sessionStorage.getItem('username')}</span>
-          <button className="navbar-logout" onClick={() => { sessionStorage.removeItem('username'); window.location.href = '/login'; }}>
+          <button className="navbar-logout" onClick={() => { sessionStorage.removeItem('username'); window.location.href = '/JurChat/login'; }}>
             <span className="navbar-logout-icon">
               <FiLogOut size={20} color="#475569" />
             </span>
@@ -297,7 +297,7 @@ const AppPage: React.FC = () => {
                 </div>
                 <button 
                   className="mobile-logout-btn" 
-                  onClick={() => { sessionStorage.removeItem('username'); window.location.href = '/login'; }}
+                  onClick={() => { sessionStorage.removeItem('username'); window.location.href = '/JurChat/login'; }}
                 >
                   <span className="mobile-logout-icon">
                     <FiLogOut size={20} />
