@@ -246,7 +246,7 @@ const AppPage: React.FC = () => {
         
         {/* Desktop Navigation */}
         <nav className="navbar-menu desktop-menu">
-          <button className="navbar-btn navbar-btn-active" onClick={() => window.location.href = '/'} style={{background: 'none', color: '#22223b', fontWeight: 500}}>
+          <button className="navbar-btn navbar-btn-active" onClick={() => window.location.href = '/JurChat'} style={{background: 'none', color: '#22223b', fontWeight: 500}}>
             <span className="navbar-btn-icon">
               <FiArrowUpCircle size={20} color="#22223b" />
             </span>
@@ -283,7 +283,7 @@ const AppPage: React.FC = () => {
               <nav className="mobile-nav">
                 <button 
                   className="mobile-nav-btn mobile-nav-btn-active" 
-                  onClick={() => { window.location.href = '/'; setIsMobileMenuOpen(false); }}
+                  onClick={() => { window.location.href = '/JurChat'; setIsMobileMenuOpen(false); }}
                 >
                   <span className="mobile-nav-icon">
                     <FiArrowUpCircle size={20} />

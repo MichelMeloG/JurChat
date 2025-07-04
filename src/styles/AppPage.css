@@ -469,11 +469,7 @@ h2.panel-title, h3.panel-title {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.clausula-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
-  border-color: rgba(118, 75, 162, 0.4);
-}
+
 
 .clausula-item:last-child {
   margin-bottom: 0;
